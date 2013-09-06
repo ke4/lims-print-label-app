@@ -1,0 +1,4 @@
+root_urls:
+  localhost: "http://localhost:9292/"
+  uat: "http://uat:8000/"
+  production: "http://production:7000/"
