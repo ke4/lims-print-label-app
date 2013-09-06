@@ -1,8 +1,10 @@
-require 'yaml'
+require 'lims-print-label-app/util/color_output'
 
 module Lims::PrintLabelApp
 
   class UserInput
+    include ColorOutput
+
     attr_accessor :input, :output
 
     def initialize
@@ -32,7 +34,7 @@ module Lims::PrintLabelApp
       # if user input is numeric, then we validate it
       if user_input.match(/^(\d)+$/) && 
         !valid_user_input_from_selection(user_input, selection.size)
-        output.puts "\nThe entered number is not correct. Please type it, again"
+        puts_error "\nThe entered number is not correct. Please type it, again"
         user_input_from_selection(selection, message)
       end
 

@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib", "spec"]
 
   s.add_dependency('rest-client')
+  s.add_dependency('colored')
 
   s.add_development_dependency('rake', '~> 0.9.2')
   s.add_development_dependency('rspec', '~> 2.8.0')
