@@ -2,7 +2,7 @@ require 'rest_client'
 require 'json'
 
 module Lims::PrintLabelApp
-  module Helper
+  module Util
     # A module for handling the GET and POST request to the server
     module API
 

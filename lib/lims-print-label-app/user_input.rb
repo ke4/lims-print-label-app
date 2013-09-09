@@ -1,9 +1,13 @@
 require 'lims-print-label-app/util/color_output'
+require 'virtus'
+require 'aequitas'
 
 module Lims::PrintLabelApp
 
   class UserInput
-    include ColorOutput
+    include Util::ColorOutput
+    include Virtus
+    include Aequitas
 
     attr_accessor :input, :output
 
@@ -23,8 +27,8 @@ module Lims::PrintLabelApp
     # @return [String] user_input can be a number (in String) or a String
     def user_input_from_selection(selection, message)
       i = 1
-      selection.each do |url|
-        output.puts i.to_s + '. ' + url + '\n'
+      selection.each do |item|
+        output.puts i.to_s + '. ' + item[:to_display] + '\n'
         i += 1
       end
       output.puts message
@@ -45,7 +49,7 @@ module Lims::PrintLabelApp
     # @return [Array]
     def root_urls
       @config['root_urls'].collect do |key, value|
-        key + ": " + value
+        {:key => key, :value => value, :to_display => key+ ": " + value }
       end
     end
 
@@ -61,7 +65,7 @@ EOD
         )
 
       if input.match(/^(\d)+$/)
-        root_url = root_urls[input.to_i]
+        root_url = selected_value(root_urls, input)
       else 
         root_url = input
       end
@@ -69,14 +73,36 @@ EOD
       root_url
     end
 
+    def select_printer_uuid_from_json(label_printers)
+      printers_to_display = display_label_printers(label_printers)
+      input = user_input_from_selection(
+        printers_to_display,
+        "Please choose from the label printer from the above list and enter its number."
+        )
+
+      selected_value(printers_to_display, input)
+    end
+
     private
     def valid_user_input_from_selection(selection, size)
       valid = true
-      if selection.match(/^(\d)+$/) && 
-        selection.to_i >= size
+      if selection.to_i > size
         valid = false
       end
       valid
+    end
+
+    def selected_value(selection, user_input)
+      selection[user_input.to_i - 1][:value]
+    end
+
+    def display_label_printers(label_printers)
+      label_printers.collect do |label_printer|
+      { :key        => label_printer["name"],
+        :value      => label_printer["uuid"],
+        :to_display => "printer name: #{label_printer['name']} (uuid: #{label_printer['uuid']}) - label type: #{label_printer['label_type']}"
+      }
+      end
     end
   end
 end

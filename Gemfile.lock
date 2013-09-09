@@ -8,12 +8,15 @@ PATH
   remote: .
   specs:
     lims-print-label-app (0.1.0)
+      aequitas
       colored
       rest-client
+      virtus (= 0.2.0)
 
 GEM
   remote: http://rubygems.org/
   specs:
+    aequitas (0.0.2)
     bond (0.4.3)
     colored (1.2)
     columnize (0.3.6)
@@ -44,6 +47,7 @@ GEM
     rspec-mocks (2.8.0)
     shotgun (0.9)
       rack (>= 1.0)
+    virtus (0.2.0)
 
 PLATFORMS
   ruby
