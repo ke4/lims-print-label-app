@@ -69,7 +69,6 @@ module Lims::PrintLabelApp
       end
 
       def print_label(label_printer_uuid, template_name, label_data, header_text, footer_text)
-        debugger
         parameters = label_printer_parameters(template_name, label_data, header_text, footer_text)
         post(url_by_uuid(label_printer_uuid), parameters)
       end
