@@ -81,9 +81,8 @@ footer_params = user_input.fill_in_template(footer, footer_values)
 print = label_printer_requests.print_label(
   label_printer_uuid, label_template[:name], label_to_print, header_params, footer_params)
 
-debugger
-
-puts print
+puts "The response from the server:"
+pp print
 
 puts "\nThe required label has been printed with the given label printer.\n" +
   "Please, collect your label from the printer."
