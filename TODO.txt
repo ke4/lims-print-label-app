@@ -1,6 +1,4 @@
 TODO:
-- fill in the place holders in the form
-- print the label
 - refactor the print_label file
 
 Additional stuff:
