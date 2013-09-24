@@ -14,15 +14,15 @@ module Lims::PrintLabelApp
       end
 
       let(:root_urls) {
-        [ "localhost: http://localhost:9292/",
-          "uat: http://uat:8000/",
-          "production: http://production:7000/"
+        [ {:key => "localhost",   :value => "http://localhost:9292/",   :to_display => "localhost: http://localhost:9292/"},
+          {:key => "uat",         :value => "http://uat:8000/",    :to_display => "uat: http://uat:8000/"},
+          {:key => "production",  :value => "http://production:7000/",  :to_display => "production: http://production:7000/"}
         ]
       }
       let(:input) { "2" }
 
       it {
-        subject.root_url.should == root_urls[input.to_i]
+        subject.root_url.should == root_urls[input.to_i-1][:value]
       }
     end
 
@@ -47,6 +47,17 @@ module Lims::PrintLabelApp
         uuid = subject.select_printer_uuid_from_json(label_printers)
         uuid.should be_a_kind_of(String)
         uuid.should match(/^([0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12})?/)
+      }
+    end
+
+    context "select_template should return a printable template" do
+      let(:label_printer_uuid) { "f6166830-d513-0130-88a1-005056a81d80" }
+
+      it {
+        template = subject.select_template(label_printer_uuid)
+        template.should be_a_kind_of(String)
+        template.should match(/PC(\d){3}/)
+        template.should match(/RC(\d){3}/)
       }
     end
   end

@@ -15,7 +15,7 @@ PC013;0008,0020,05,1,G,+03,11,W
 XB01;0300,0000,5,3,02,0,0070,+0000000000,002,0,00
 C
 RC001;{{tube_rack.sanger}}
-RC002;{{#tube_rack.label_text}}{{tube_rack.label_text.role}}{{/tube_rack.label_text}}
+RC002;{{#tube_rack.label_text}}{{role}}{{/tube_rack.label_text}}
 RC003;{{#tube_rack.label_text}}{{tube_rack.label_text.text3}}{{/tube_rack.label_text}}
 RC004;{{#tube_rack.label_text}}{{tube_rack.label_text.text4}}{{/tube_rack.label_text}}
 RC005;{{#tube_rack.label_text}}{{tube_rack.label_text.text5}}{{/tube_rack.label_text}}

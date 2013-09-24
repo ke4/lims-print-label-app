@@ -24,11 +24,11 @@ class Mustache
         if [:etag, :utag].include?(token[1])
           [ new_token   = nil,
             new_section = nil,
-            result      = ((section + [simple_tag_name(token[2][2])]).join('.')),
+            result      = ((section + [full_tag_name(token[2][2], section)]).join('.')),
             stop        = true ]
         elsif [:section, :inverted_section].include?(token[1]) 
           [ new_token   = token[4],
-            new_section = (section + [simple_tag_name(token[2][2])]),
+            new_section = (section + [full_tag_name(token[2][2])]),
             result      = nil,
             stop        = false ]
         else
@@ -41,8 +41,13 @@ class Mustache
     end
 
     private
-    def full_tag_name(namespaces)
-      namespaces.join('.')
+    def full_tag_name(namespaces, section = [])
+      tag_name = namespaces.join('.')
+      if section.size > 0
+        injected_section = section.inject("") { |sum, item| sum + item} + '.'
+        tag_name.slice!(injected_section)
+      end
+      tag_name
     end
 
     def simple_tag_name(namespaces)
