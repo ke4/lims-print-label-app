@@ -1,6 +1,7 @@
 require 'lims-print-label-app/util/color_output'
 require 'virtus'
 require 'aequitas'
+require 'mymustache/template'
 
 module Lims::PrintLabelApp
 
@@ -28,7 +29,7 @@ module Lims::PrintLabelApp
     def user_input_from_selection(selection, message)
       i = 1
       selection.each do |item|
-        output.puts i.to_s + '. ' + item[:to_display] + '\n'
+        output.puts i.to_s + '. ' + item[:to_display]
         i += 1
       end
       output.puts message
@@ -38,19 +39,11 @@ module Lims::PrintLabelApp
       # if user input is numeric, then we validate it
       if user_input.match(/^(\d)+$/) && 
         !valid_user_input_from_selection(user_input, selection.size)
-        puts_error "\nThe entered number is not correct. Please type it, again"
+        puts_error "\nThe entered number is not correct. Please type it again!"
         user_input_from_selection(selection, message)
       end
 
       user_input
-    end
-
-    # Returns a list of the root_urls from the config file
-    # @return [Array]
-    def root_urls
-      @config['root_urls'].collect do |key, value|
-        {:key => key, :value => value, :to_display => key+ ": " + value }
-      end
     end
 
     # Returns the user selected root url
@@ -77,13 +70,43 @@ EOD
       printers_to_display = display_label_printers(label_printers)
       input = user_input_from_selection(
         printers_to_display,
-        "Please choose from the label printer from the above list and enter its number."
+        "Please choose a label printer from the above list and enter its number."
         )
 
       selected_value(printers_to_display, input)
     end
 
+    def select_template(label_printer)
+      templates_to_display = display_templates(label_printer)
+
+      input = user_input_from_selection(
+        templates_to_display,
+        "Please choose a template from the above list and enter its number."
+        )
+
+      { :name => selected_name(templates_to_display, input),
+        :text => selected_value(templates_to_display, input) }
+    end
+
+    def fill_in_template(template_text, template_values)
+      template = Mustache::Template.new(template_text)
+      output.puts "Please enter the value of the following placeholder in the selected text."
+      template.tags.each do |tag|
+        output.print tag + ": "
+        user_input = input.gets.chomp
+        template_values = add_template_value(template_values, tag, user_input)
+      end
+#      Mustache.render(template, template_values)
+      template_values
+    end
+
     private
+    def add_template_value(template_values, tag, value)
+      template_values.rmerge!(
+        tag.split('.').reverse.inject(value) { |sum, item| { item => sum } }
+      )
+    end
+
     def valid_user_input_from_selection(selection, size)
       valid = true
       if selection.to_i > size
@@ -96,13 +119,35 @@ EOD
       selection[user_input.to_i - 1][:value]
     end
 
-    def display_label_printers(label_printers)
-      label_printers.collect do |label_printer|
-      { :key        => label_printer["name"],
-        :value      => label_printer["uuid"],
-        :to_display => "printer name: #{label_printer['name']} (uuid: #{label_printer['uuid']}) - label type: #{label_printer['label_type']}"
-      }
+    def selected_name(selection, user_input)
+      selection[user_input.to_i - 1][:key]
+    end
+
+    # Returns a list of the root_urls from the config file
+    # @return [Array]
+    def root_urls
+      @config['root_urls'].collect do |key, value|
+        {:key => key, :value => value, :to_display => key+ ": " + value }
       end
     end
+
+    def display_label_printers(label_printers)
+      label_printers.collect do |label_printer|
+        { :key        => label_printer["name"],
+          :value      => label_printer["uuid"],
+          :to_display => "printer name: #{label_printer['name']} (uuid: #{label_printer['uuid']}) - label type: #{label_printer['label_type']}"
+        }
+      end
+    end
+
+    def display_templates(label_printer)
+      label_printer["templates"].collect do |template|
+        { :key        => template["name"],
+          :value      => template["content"],
+          :to_display => "template name: #{template['name']}, description: #{template['description']}"
+        }
+      end
+    end
+
   end
 end

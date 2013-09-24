@@ -44,6 +44,12 @@ module Lims::PrintLabelApp
         @root[model.to_s]["actions"][action.to_s]
       end
 
+      # Gets the resource's URL by its uuid
+      # @return [String] the resource's URL by its uuid
+      def url_by_uuid(uuid)
+        File.join(@root_url,uuid)
+      end
+
       # Gets a resource JSON by its uuid
       # @return [String] the resource JSON by its uuid
       def get_by_uuid(uuid)

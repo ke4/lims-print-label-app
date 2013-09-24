@@ -9,7 +9,12 @@ module Lims::PrintLabelApp
       include Aequitas
       include API
 
-      LABEL_PRINTERS_KEY = 'label_printers'
+      LABEL_PRINTERS_KEY  = 'label_printers'
+      LABEL_PRINTER_KEY   = 'label_printer'
+      LABELS_ARRAY_KEY    = 'labels'
+      TEMPLATE_KEY        = 'template'
+      HEADER_TEXT_KEY     = 'header_text'
+      FOOTER_TEXT_KEY     = 'footer_text'
 
       # @param [String] url of the server to send the request
       def initialize(url)
@@ -24,7 +29,10 @@ module Lims::PrintLabelApp
         uuid = nil
 
         label_printers.each do |label_printer|
-          uuid = label_printer["uuid"] if label_printer["name"] == printer_name
+          if label_printer["name"] == printer_name
+            uuid = label_printer["uuid"]
+            break
+          end
         end
 
         uuid
@@ -47,6 +55,37 @@ module Lims::PrintLabelApp
       def label_printers
         get(url_for(LABEL_PRINTERS_KEY, "first"))[LABEL_PRINTERS_KEY]
       end
+
+      def label_printer(label_printer_uuid)
+        get_by_uuid(label_printer_uuid)[LABEL_PRINTER_KEY]
+      end
+
+      def header_text(label_printer_uuid)
+        label_printer(label_printer_uuid)['header']
+      end
+
+      def footer_text(label_printer_uuid)
+        label_printer(label_printer_uuid)['footer']
+      end
+
+      def print_label(label_printer_uuid, template_name, label_data, header_text, footer_text)
+        debugger
+        parameters = label_printer_parameters(template_name, label_data, header_text, footer_text)
+        post(url_by_uuid(label_printer_uuid), parameters)
+      end
+
+      private
+      def label_printer_parameters(template_name, label, header_text, footer_text)
+        { LABEL_PRINTER_KEY => {
+          LABELS_ARRAY_KEY => [
+            {TEMPLATE_KEY => template_name}.merge!(label)
+            ],
+          HEADER_TEXT_KEY => header_text,
+          FOOTER_TEXT_KEY => footer_text
+          }
+        }
+      end
+
     end
   end
 end
