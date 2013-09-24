@@ -1,0 +1,9 @@
+TODO:
+- fill in the place holders in the form
+- print the label
+- refactor the print_label file
+
+Additional stuff:
+1. print selected template and ask if it is the correct one, if not go back to the template selection
+2. print message text with different color
+3. display the label's preview

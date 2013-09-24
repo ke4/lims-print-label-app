@@ -1,4 +1,5 @@
 require 'optparse'
+require 'base64'
 require 'lims-print-label-app'
 require 'lims-print-label-app/user_input'
 require 'lims-print-label-app/util/request_api'
@@ -18,6 +19,10 @@ OptionParser.new do |opts|
   opts.on("-r", "--role R")         { |r| options[:role]          = r }
   opts.on("-l", "--labware L")      { |l| options[:labware]       = l }
 end.parse!
+
+template_values = {}
+header_values = {}
+footer_values = {}
 
 user_input = Lims::PrintLabelApp::UserInput.new
 
@@ -51,4 +56,35 @@ unless valid_printer_uuid
   valid_printer_uuid = true
 end
 
+# 3. step
+# Choose the template to print the label
+label_printer = label_printer_requests.label_printer(label_printer_uuid)
+label_template = user_input.select_template(label_printer)
+label_template[:text] = Base64.decode64(label_template[:text])
 
+puts label_template[:text]
+
+# 4. step
+# Fill in the placeholders in the template
+label_to_print = user_input.fill_in_template(label_template[:text], template_values)
+
+# 5. step
+# Fill in the header and footer
+header = Base64.decode64(label_printer_requests.header_text(label_printer_uuid))
+header_params = user_input.fill_in_template(header, header_values)
+
+footer = Base64.decode64(label_printer_requests.footer_text(label_printer_uuid))
+footer_params = user_input.fill_in_template(footer, footer_values)
+
+# 6. step
+# Print the label
+print = label_printer_requests.print_label(
+  label_printer_uuid, label_template[:name], label_to_print, header_params, footer_params)
+
+debugger
+
+puts print
+
+puts "\nThe required label has been printed with the given label printer.\n" +
+  "Please, collect your label from the printer."
+exit
