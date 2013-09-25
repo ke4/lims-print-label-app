@@ -4,29 +4,21 @@ require 'spec_helper'
 module Lims::PrintLabelApp
   module Util
     describe LabelPrinterRequest do
-#      before do
-#        subject { LabelPrinterRequest.new(dummy_url) }
-#        subject.stub(:get) {
-#          YAML.load(get_file_as_string(File.join('spec', 'test_files','label_printers.json')))
-#        }
-#        subject.stub(:url_for) {
-#          dummy_url
-#        }
-#      end
+      before do
+        LabelPrinterRequest.any_instance.stub(:get) do
+          YAML.load(get_file_as_string(File.join('spec', 'test_files','label_printers.json')))
+        end
+        LabelPrinterRequest.any_instance.stub(:url_for) do
+          dummy_url
+        end
+      end
 
-      let(:dummy_url) { "http://localhost:9292/"}
+      let(:dummy_url) { "http://example.com/"}
       subject { LabelPrinterRequest.new(dummy_url) }
-      let(:printer_name) { "d304bc" }
+      let(:printer_name) { "d304bc-test" }
 
       context "gets a uuid by name" do
         it {
-          subject.stub(:get) {
-            YAML.load(get_file_as_string(File.join('spec', 'test_files','label_printers.json')))
-          }
-          subject.stub(:url_for) {
-            dummy_url
-          }
-
           uuid = subject.uuid_by_name(printer_name)
           uuid.should be_a_kind_of(String)
           uuid.should match(/^([0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12})?/)
@@ -34,7 +26,7 @@ module Lims::PrintLabelApp
       end
 
       context "checks a valid label printer's uuid" do
-        let(:uuid) { "b6cdff00-d0ec-0130-2df7-406c8f37cea7" }
+        let(:uuid) { "f0574ea0-d513-0130-889f-005056a81d80" }
         it {
           subject.uuid_exist?(uuid).should == true
         }
