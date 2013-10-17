@@ -40,7 +40,7 @@ module Lims::PrintLabelApp
       if user_input.match(/^(\d)+$/) && 
         !valid_user_input_from_selection(user_input, selection.size)
         puts_error "\nThe entered number is not correct. Please type it again!"
-        user_input_from_selection(selection, message)
+        user_input = user_input_from_selection(selection, message)
       end
 
       user_input
