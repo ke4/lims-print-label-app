@@ -62,19 +62,20 @@ label_printer = label_printer_requests.label_printer(label_printer_uuid)
 label_template = user_input.select_template(label_printer)
 label_template[:text] = Base64.decode64(label_template[:text])
 
+puts "\nThis is the choosen draft template with the placeholders:"
 puts label_template[:text]
 
 # 4. step
 # Fill in the placeholders in the template
-label_to_print = user_input.fill_in_template(label_template[:text], template_values)
+label_to_print = user_input.fill_in_template(label_template[:text], template_values, "template")
 
 # 5. step
 # Fill in the header and footer
 header = Base64.decode64(label_printer_requests.header_text(label_printer_uuid))
-header_params = user_input.fill_in_template(header, header_values)
+header_params = user_input.fill_in_template(header, header_values, "template's header")
 
 footer = Base64.decode64(label_printer_requests.footer_text(label_printer_uuid))
-footer_params = user_input.fill_in_template(footer, footer_values)
+footer_params = user_input.fill_in_template(footer, footer_values, "template's footer")
 
 # 6. step
 # Print the label
@@ -84,6 +85,6 @@ print = label_printer_requests.print_label(
 puts "The response from the server:"
 pp print
 
-puts "\nThe required label has been printed with the given label printer.\n" +
+puts_message "\nThe required label has been printed with the given label printer.\n" +
   "Please, collect your label from the printer."
 exit

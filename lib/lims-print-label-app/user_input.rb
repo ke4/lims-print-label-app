@@ -28,11 +28,12 @@ module Lims::PrintLabelApp
     # @return [String] user_input can be a number (in String) or a String
     def user_input_from_selection(selection, message)
       i = 1
+      output.puts
       selection.each do |item|
         output.puts i.to_s + '. ' + item[:to_display]
         i += 1
       end
-      output.puts message
+      puts_message message
 
       user_input = input.gets.chomp
 
@@ -40,6 +41,7 @@ module Lims::PrintLabelApp
       if user_input.match(/^(\d)+$/) && 
         !valid_user_input_from_selection(user_input, selection.size)
         puts_error "\nThe entered number is not correct. Please type it again!"
+        output.puts
         user_input = user_input_from_selection(selection, message)
       end
 
@@ -51,11 +53,8 @@ module Lims::PrintLabelApp
     def root_url
       input = user_input_from_selection(
         root_urls,
-      <<EOD
-Please choose from the above list and enter its number.
-Alternatively, you can enter another URL, which is not in the list.
-EOD
-        )
+      "Please choose from the above list and enter its number.\n" +
+      "Alternatively, you can enter another URL, which is not in the list.")
 
       if input.match(/^(\d)+$/)
         root_url = selected_value(root_urls, input)
@@ -88,9 +87,9 @@ EOD
         :text => selected_value(templates_to_display, input) }
     end
 
-    def fill_in_template(template_text, template_values)
+    def fill_in_template(template_text, template_values, place)
       template = Mustache::Template.new(template_text)
-      output.puts "Please enter the value of the following placeholder in the selected text."
+      puts_message "Please enter the value of the following placeholder in the #{place}."
       template.tags.each do |tag|
         output.print tag + ": "
         user_input = input.gets.chomp
