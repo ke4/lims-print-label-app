@@ -2,7 +2,7 @@ TODO:
 - refactor the print_label file
 
 Additional stuff:
-1. print selected template and ask if it is the correct one, if not go back to the template selection
+Done 1. print selected template and ask if it is the correct one, if not go back to the template selection
 Done 2. Catch connection error and go back to root URL selection
 Done 3. print message text with different color
 4. display the label's preview

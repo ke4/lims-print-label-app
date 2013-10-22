@@ -60,10 +60,6 @@ end
 # Choose the template to print the label
 label_printer = label_printer_requests.label_printer(label_printer_uuid)
 label_template = user_input.select_template(label_printer)
-label_template[:text] = Base64.decode64(label_template[:text])
-
-puts "\nThis is the choosen draft template with the placeholders:"
-puts label_template[:text]
 
 # 4. step
 # Fill in the placeholders in the template
