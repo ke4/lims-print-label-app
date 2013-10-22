@@ -86,13 +86,24 @@ module Lims::PrintLabelApp
     def select_template(label_printer)
       templates_to_display = display_templates(label_printer)
 
-      input = user_input_from_selection(
+      chosen_template_nr = user_input_from_selection(
         templates_to_display,
         "Please choose a template from the above list and enter its number."
         )
 
+      template_text = Base64.decode64(selected_value(templates_to_display, chosen_template_nr))
+      puts "\nThis is the choosen draft template with the placeholders:"
+      puts template_text
+      puts_message "Is this the correct template you would like to use to print out your label?\n" +
+        "Type No or N, if not, otherwise just hit ENTER."
+
+      user_input = input.gets.chomp
+      if user_input.downcase.match(/^no$|^n$/)
+        select_template(label_printer)
+      end
+
       { :name => selected_name(templates_to_display, input),
-        :text => selected_value(templates_to_display, input) }
+        :text => template_text }
     end
 
     def fill_in_template(template_text, template_values, place)
