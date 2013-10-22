@@ -29,9 +29,9 @@ user_input = Lims::PrintLabelApp::UserInput.new
 # 1. step
 # Gets the application's root URL from the user
 # if it is not given as a parameter
-app_root_url = options[:root_url] != nil ? options[:root_url] : user_input.root_url
-
-label_printer_requests = Lims::PrintLabelApp::Util::LabelPrinterRequest.new(app_root_url)
+# and instantiate the LabelPrinterRequest object,
+# which will represent the choosen label printer
+label_printer_requests = user_input.label_printer_requests(options[:root_url])
 
 # 2. step
 # Choose the label printer the user wants to use.
