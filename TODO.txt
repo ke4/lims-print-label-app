@@ -3,5 +3,6 @@ TODO:
 
 Additional stuff:
 1. print selected template and ask if it is the correct one, if not go back to the template selection
-2. print message text with different color
-3. display the label's preview
+Done 2. Catch connection error and go back to root URL selection
+Done 3. print message text with different color
+4. display the label's preview

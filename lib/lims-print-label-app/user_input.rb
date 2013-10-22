@@ -65,6 +65,14 @@ module Lims::PrintLabelApp
       root_url
     end
 
+    def label_printer_requests(app_root_url_from_config)
+      app_root_url = app_root_url_from_config != nil ? app_root_url_from_config : root_url
+      Lims::PrintLabelApp::Util::LabelPrinterRequest.new(app_root_url)
+    rescue Errno::ECONNREFUSED
+      puts_error "The selected server is not available to service your request."
+      retry
+    end
+
     def select_printer_uuid_from_json(label_printers)
       printers_to_display = display_label_printers(label_printers)
       input = user_input_from_selection(
