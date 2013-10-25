@@ -102,7 +102,7 @@ module Lims::PrintLabelApp
         select_template(label_printer)
       end
 
-      { :name => selected_name(templates_to_display, input),
+      { :name => selected_name(templates_to_display, chosen_template_nr),
         :text => template_text }
     end
 
