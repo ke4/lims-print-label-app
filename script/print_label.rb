@@ -4,9 +4,12 @@ require 'lims-print-label-app'
 require 'lims-print-label-app/user_input'
 require 'lims-print-label-app/util/request_api'
 require 'lims-print-label-app/util/label_printer_request'
+require 'lims-print-label-app/util/color_output'
 
 require 'rubygems'
 require 'ruby-debug'
+
+include Lims::PrintLabelApp::Util::ColorOutput
 
 options = {}
 OptionParser.new do |opts|
