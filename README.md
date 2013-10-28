@@ -23,6 +23,10 @@ an error message and you can select another one from the list.
 
     In this step you can select the label printer to print your label.
 Just type the number before the printer name.
+    If you are just testing, you can use our label printers currently named:
+    * e367bc
+    * d304bc
+    **The printer names starting with letter 'g' is in the laboratory (g214bc, g216bc). Please don't use it for testing purposes.**
 
 3. Select a label template
 
