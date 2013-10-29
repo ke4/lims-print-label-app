@@ -68,21 +68,13 @@ module Lims::PrintLabelApp
         label_printer(label_printer_uuid)['footer']
       end
 
-      def print_label(label_printer_uuid, template_name, label_data, header_text, footer_text)
-        parameters = label_printer_parameters(template_name, label_data, header_text, footer_text)
-        post(url_by_uuid(label_printer_uuid), parameters)
-      end
-
-      private
-      def label_printer_parameters(template_name, label, header_text, footer_text)
-        { LABEL_PRINTER_KEY => {
-          LABELS_ARRAY_KEY => [
-            {TEMPLATE_KEY => template_name}.merge!(label)
-            ],
-          HEADER_TEXT_KEY => header_text,
-          FOOTER_TEXT_KEY => footer_text
-          }
+      def print_label(label_printer_uuid, labels)
+        parameters = {  LABEL_PRINTER_KEY => {
+                        LABELS_ARRAY_KEY => labels[:labels],
+                        HEADER_TEXT_KEY => labels[:header],
+                        FOOTER_TEXT_KEY => labels[:footer] }
         }
+        post(url_by_uuid(label_printer_uuid), parameters)
       end
 
     end
