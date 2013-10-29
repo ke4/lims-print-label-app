@@ -4,6 +4,7 @@ require 'lims-print-label-app'
 require 'lims-print-label-app/user_input'
 require 'lims-print-label-app/util/request_api'
 require 'lims-print-label-app/util/label_printer_request'
+require 'lims-print-label-app/label_templates_filler'
 require 'lims-print-label-app/util/color_output'
 
 require 'rubygems'
@@ -22,10 +23,6 @@ OptionParser.new do |opts|
   opts.on("-r", "--role R")         { |r| options[:role]          = r }
   opts.on("-l", "--labware L")      { |l| options[:labware]       = l }
 end.parse!
-
-template_values = {}
-header_values = {}
-footer_values = {}
 
 user_input = Lims::PrintLabelApp::UserInput.new
 
@@ -59,27 +56,23 @@ unless valid_printer_uuid
   valid_printer_uuid = true
 end
 
-# 3. step
-# Choose the template to print the label
 label_printer = label_printer_requests.label_printer(label_printer_uuid)
-label_template = user_input.select_template(label_printer)
+header = Base64.decode64(label_printer_requests.header_text(label_printer_uuid))
+footer = Base64.decode64(label_printer_requests.footer_text(label_printer_uuid))
+
+# 3. step
+# Choose the template(s) to print the label
+# and fill in the selected template(s).
+templates_filler = Lims::PrintLabelApp::LabelTemplatesFiller.new(label_printer, user_input)
+label_to_print = templates_filler.select_and_fill_templates
 
 # 4. step
-# Fill in the placeholders in the template
-label_to_print = user_input.fill_in_template(label_template[:text], template_values, "template")
+# Fill in the header and footer
+label_to_print.merge!(templates_filler.fill_header_and_footer(header, footer))
 
 # 5. step
-# Fill in the header and footer
-header = Base64.decode64(label_printer_requests.header_text(label_printer_uuid))
-header_params = user_input.fill_in_template(header, header_values, "template's header")
-
-footer = Base64.decode64(label_printer_requests.footer_text(label_printer_uuid))
-footer_params = user_input.fill_in_template(footer, footer_values, "template's footer")
-
-# 6. step
 # Print the label
-print = label_printer_requests.print_label(
-  label_printer_uuid, label_template[:name], label_to_print, header_params, footer_params)
+print = label_printer_requests.print_label(label_printer_uuid, label_to_print)
 
 puts "The response from the server:"
 pp print

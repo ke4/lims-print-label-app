@@ -48,6 +48,20 @@ module Lims::PrintLabelApp
       user_input
     end
 
+    def another_label?
+      puts_message "Do you want to add another label to the print?\n" +
+        "Please, type Y(es) or N(o)."
+      user_input = input.gets.chomp
+      if user_input.downcase.match(/^no$|^n$/)
+        false
+      elsif user_input.downcase.match(/^yes$|^y$/)
+        true
+      else
+        another_label?
+      end
+    end
+
+
     # Returns the user selected root url
     # @return [String] root url
     def root_url
@@ -106,7 +120,8 @@ module Lims::PrintLabelApp
         :text => template_text }
     end
 
-    def fill_in_template(template_text, template_values, place)
+    def fill_in_template(template_text, place)
+      template_values = {}
       template = Mustache::Template.new(template_text)
       puts_message "Please enter the value of the following placeholder in the #{place}."
       template.tags.each do |tag|
