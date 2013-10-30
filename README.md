@@ -8,7 +8,7 @@ with the selected label template with the entered parameters.
 
 To start the application just type:
 
-./run.sh
+`./run.sh`
 
 It checks if the bundler is installed, if not then it installs it.
 It also checks the gem dependencies and if not satisfied, then do a bundle install.
