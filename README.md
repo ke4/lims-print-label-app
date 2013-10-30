@@ -8,7 +8,11 @@ with the selected label template with the entered parameters.
 
 To start the application just type:
 
-bundle exec ruby script/print_label.rb
+./run.sh
+
+It checks if the bundler is installed, if not then it installs it.
+It also checks the gem dependencies and if not satisfied, then do a bundle install.
+If everything went well then it starts the application.
 
 1. Select the server
     
