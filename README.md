@@ -6,6 +6,18 @@ This application prints a label on a label printer with the given input paramete
 This is an interactive application to print a label on the selected label printer
 with the selected label template with the entered parameters.
 
+
+Configuration
+-------------
+
+You have to modify the `config/options.yml` file with the correct URLs.
+
+#### Without this you can not use this application.
+
+
+Using the application
+---------------------
+
 To start the application just type:
 
 `./run.sh`
