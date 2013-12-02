@@ -126,7 +126,13 @@ module Lims::PrintLabelApp
       puts_message "Please enter the value of the following placeholder in the #{place}."
       template.tags.each do |tag|
         output.print tag + ": "
-        user_input = input.gets.chomp
+        user_input = input.gets.chomp.strip
+        if mandatory_field(tag)
+          unless user_input && !user_input.empty?
+            puts_error "It is mandatory to fill in this field: #{tag}."
+            redo
+          end
+        end
         template_values = add_template_value(template_values, tag, user_input)
       end
 #      Mustache.render(template, template_values)
@@ -162,6 +168,21 @@ module Lims::PrintLabelApp
       @config['root_urls'].collect do |key, value|
         {:key => key, :value => value, :to_display => key+ ": " + value }
       end
+    end
+
+    # Checks if the field is mandatory to fill in
+    # @param [String] the name of the field to fill in
+    # @ return [Boolean] true if it is mandatory field, otherwise false
+    def mandatory_field(field)
+      mandatory = false
+      @config['mandatory_fields'].each do |mandatory_field|
+        if field.match(mandatory_field)
+          mandatory = true
+          break
+        end
+      end
+
+      mandatory
     end
 
     def display_label_printers(label_printers)
