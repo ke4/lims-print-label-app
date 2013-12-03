@@ -127,12 +127,19 @@ module Lims::PrintLabelApp
       template.tags.each do |tag|
         output.print tag + ": "
         user_input = input.gets.chomp.strip
+
+        # if tag is a header/footer field, then add the username to the value
+        if tag.match(/^header$*/) || tag.match(/^footer$*/)
+          user_input = "by " + Etc.getlogin + ": " + user_input
+        end
+
         if mandatory_field(tag)
           unless user_input && !user_input.empty?
             puts_error "It is mandatory to fill in this field: #{tag}."
             redo
           end
         end
+
         template_values = add_template_value(template_values, tag, user_input)
       end
 #      Mustache.render(template, template_values)
